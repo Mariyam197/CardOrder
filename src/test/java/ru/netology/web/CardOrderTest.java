@@ -14,7 +14,6 @@ public class CardOrderTest {
     @BeforeAll
     static void setUpAll() {
         WebDriverManager.chromedriver().setup();
-//        System.setProperty("webdriver.chrome.driver","./driver/win/chromedriver.exe");
     }
 
     @BeforeEach
@@ -24,6 +23,7 @@ public class CardOrderTest {
         options.addArguments("--no-sandbox");
         options.addArguments("--headless");
         driver = new ChromeDriver(options);
+        driver.get("http://localhost:9999/");
     }
 
     @AfterEach
@@ -33,8 +33,7 @@ public class CardOrderTest {
     }
 
     @Test
-    void shouldSendOrderForm() throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldSendOrderForm() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Петров Николай");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79874532180");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
@@ -45,8 +44,7 @@ public class CardOrderTest {
     }
 
     @Test
-    void shouldSendOrderFormNameWithHyphen() throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldSendOrderFormNameWithHyphen() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Иванова Анна-Мария");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79874532180");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
@@ -57,74 +55,68 @@ public class CardOrderTest {
     }
 
     @Test
-    void shouldSendErrorWithoutName() throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldSendErrorWithoutName() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79878889999");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.cssSelector("[type=button]")).click();
         String expected = "Поле обязательно для заполнения";
-        String actual = driver.findElement(By.cssSelector(".input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void shouldSendErrorWithWrongName() throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldSendErrorWithWrongName() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Petrov Ivan");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79878889999");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.cssSelector("[type=button]")).click();
         String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        String actual = driver.findElement(By.cssSelector(".input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void shouldSendErrorWithWrongPhone() throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldSendErrorWithWrongPhone() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Петров Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+798788899999");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.cssSelector("[type=button]")).click();
         String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        String actual = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void shouldSendErrorWithoutPhone() throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldSendErrorWithoutPhone() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Петров Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.cssSelector("[type=button]")).click();
         String expected = "Поле обязательно для заполнения";
-        String actual = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void shouldNotSendFormWithoutCheckbox()throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldNotSendFormWithoutCheckbox() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Петров Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79879998888");
         driver.findElement(By.cssSelector("[data-test-id=agreement]"));
         driver.findElement(By.cssSelector("[type=button]")).click();
         String expected = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
-        String actual = driver.findElement(By.cssSelector(".input_invalid .checkbox__text")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid .checkbox__text")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void shouldNotSendFormWithEmptyLine() throws InterruptedException {
-        driver.get("http://localhost:9999/");
+    void shouldNotSendFormWithEmptyLine() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("");
         driver.findElement(By.cssSelector("[data-test-id=agreement]"));
         driver.findElement(By.cssSelector("[type=button]")).click();
         String expected = "Поле обязательно для заполнения";
-        String actual = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
 
